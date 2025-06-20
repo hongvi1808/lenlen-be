@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
@@ -7,6 +7,10 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './configs/filters/global-exception.filter';
+import { GlobalValidationPipe } from './configs/pipes/global-validation.pipe';
+import { TrimPipe } from './configs/pipes/trim.pipe';
+import { ResponseFormatInterceptor } from './configs/interceptions/response-format.interceptor';
+import { AccessTokenAuthGuard } from './configs/guards/access-token-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +30,12 @@ async function bootstrap() {
   app.setGlobalPrefix(config.get('GLOBAL_API_PREFIX', ''))
 
   app.useGlobalFilters(new GlobalExceptionFilter())
+
+  app.useGlobalPipes(new GlobalValidationPipe(), new TrimPipe())
+
+  app.useGlobalInterceptors(new ResponseFormatInterceptor())
+
+  // app.useGlobalGuards(new AccessTokenAuthGuard(app.get(Reflector)))
 
   const configDoc = new DocumentBuilder()
     .setTitle('Lenlen API')

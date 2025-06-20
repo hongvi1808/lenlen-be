@@ -1,11 +1,12 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { CacheModule } from '@nestjs/cache-manager';
 import { LoggerMiddleware } from './configs/middlewares/logger.middleware';
 import { AuthMiddleware } from './configs/middlewares/auth.middleware';
+import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenAuthGuard } from './configs/guards/access-token-auth.guard';
 
 @Module({
   imports: [
@@ -14,7 +15,14 @@ import { AuthMiddleware } from './configs/middlewares/auth.middleware';
       validationSchema: Joi.object({
         PORT: Joi.number().port().default(5678),
         NODE_ENV: Joi.string().valid('local', 'test', 'production').default('local'),
-        GLOBAL_API_PREFIX: Joi.string().default('api')
+        GLOBAL_API_PREFIX: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_REFRESH_SECRET: Joi.string(),
+        JWT_EXPIRES_IN: Joi.string().default('1h'),
+        JWT_REFRESH_EXPIRES_IN: Joi.string().default('30d'),
+        GOOGLE_CLIENT_ID: Joi.string().required(),
+        GOOGLE_CLIENT_SECRET: Joi.string().required(),
+        GOOGLE_CALLBACK_URL: Joi.string().required(),
       })
     }),
     CacheModule.register({
@@ -22,13 +30,17 @@ import { AuthMiddleware } from './configs/middlewares/auth.middleware';
       ttl: 300, // 5min
       max: 100,
       // stores: 'redis',
-    })
+    }),
+    AuthModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [
+        { provide: APP_GUARD, useClass: AccessTokenAuthGuard } // Apply JwtAuthGuard globally this module, if not use here go to main.ts
+
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('*/')
+    consumer.apply(LoggerMiddleware, AuthMiddleware).forRoutes('')
   }
 }

@@ -1,26 +1,26 @@
-import { ArgumentsHost, Catch, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
-import { ResError } from 'src/common/models/res-error.model';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ResErrorModel } from 'src/common/models/res-error.model';
 
-@Catch(BaseExceptionFilter)
-export class GlobalExceptionFilter extends BaseExceptionFilter {
+@Catch()
+export class GlobalExceptionFilter implements ExceptionFilter {
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse()
-    const status = exception.getStatus();
+    const status = exception?.status  || HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const errorRes: ResError = {
+    const errorRes: ResErrorModel = {
       success: false,
       code: 'ERROR',
-      statusCode: status || HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: status,
       message: exception.message,
-      error: exception.name || 'Error',
+      error: response?.error || exception.name || 'Error',
       data: exception.data || undefined,
     }
 
     if (exception instanceof HttpException)
-      errorRes.message = typeof response === 'string' ? response : (response as any)?.message || 'HTTP Error';
+      errorRes.message = typeof response === 'string' ? response : (response as any).message
+        || exception.message || 'HTTP Error';
     else if (exception instanceof Error) {
       errorRes.message = exception.message || 'Internal Server Error';
     }
@@ -35,7 +35,7 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
         errorRes.code = 'UNAUTHORIZED_ERROR'
         break;
       case HttpStatus.INTERNAL_SERVER_ERROR:
-        errorRes.code = 'INTERNAL_SERVER_ERROR_ERROR'
+        errorRes.code = 'INTERNAL_SERVER_ERROR'
         break;
       case HttpStatus.NOT_FOUND:
         errorRes.code = 'NOT_FOUND_ERROR'

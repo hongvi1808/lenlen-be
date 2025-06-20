@@ -1,5 +1,5 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { ResError } from 'src/common/models/res-error.model';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus, Logger } from '@nestjs/common';
+import { ResErrorModel } from 'src/common/models/res-error.model';
 
 @Catch()
 export class CustomExceptionFilter implements ExceptionFilter {
@@ -14,7 +14,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
             'CustomExceptionFilter',
         );
 
-        const errorResponse: ResError = {
+        const errorResponse: ResErrorModel = {
             success: false,
             code: exception.code || 'ERROR',
             statusCode: HttpStatus.NOT_ACCEPTABLE,
