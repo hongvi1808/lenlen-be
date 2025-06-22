@@ -1,14 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { SessionUserModel } from 'src/common/models/session-user.model';
 import { Response } from 'express';
 import { SYSTEM_KEY } from 'src/common/constants/enums';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
+constructor(
+   @Inject('AUTH_SERVICE') private authClient: ClientProxy,
+) {}
   async login(body: LoginDto) {
-    return {refreshToken: 'abc', body};
+    // return {refreshToken: 'abc', body};
+    return this.authClient.send({cmd: 'login'}, body)
   }
   async register(body: RegisterDto) {
     return body;
