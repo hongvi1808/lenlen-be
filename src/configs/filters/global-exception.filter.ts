@@ -40,6 +40,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       case HttpStatus.NOT_FOUND:
         errorRes.code = 'NOT_FOUND_ERROR'
         break;
+      case HttpStatus.NOT_ACCEPTABLE:
+        errorRes.code = 'NOT_ACCEPTABLE'
+        break;
 
       default:
         break;

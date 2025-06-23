@@ -1,12 +1,12 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
-import { CacheModule } from '@nestjs/cache-manager';
 import { LoggerMiddleware } from './configs/middlewares/logger.middleware';
 import { AuthMiddleware } from './configs/middlewares/auth.middleware';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenAuthGuard } from './configs/guards/access-token-auth.guard';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -25,18 +25,15 @@ import { AccessTokenAuthGuard } from './configs/guards/access-token-auth.guard';
         GOOGLE_CALLBACK_URL: Joi.string().required(),
       })
     }),
+    AuthModule,
     CacheModule.register({
-      isGlobal: true,
-      ttl: 300, // 5min
-      max: 100,
-      // stores: 'redis',
+      isGlobal: true
     }),
-    AuthModule
   ],
   controllers: [],
   providers: [
-        { provide: APP_GUARD, useClass: AccessTokenAuthGuard } // Apply JwtAuthGuard globally this module, if not use here go to main.ts
-
+    { provide: APP_GUARD, useClass: AccessTokenAuthGuard },
+    { provide: APP_INTERCEPTOR, useClass: CacheInterceptor }
   ],
 })
 export class AppModule implements NestModule {

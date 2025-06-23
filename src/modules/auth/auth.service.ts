@@ -1,37 +1,58 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { SessionUserModel } from 'src/common/models/session-user.model';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
 import { Response } from 'express';
+import { AUTH_SERVICE_NAME, AUTHENTICATION_PACKAGE_NAME, AuthResp, AuthServiceClient, LoginAuthDto, RegisterAuthDto } from 'proto/generated/proto/auth';
+import { USER_SERVICE_NAME, UserServiceClient } from 'proto/generated/proto/user';
+import { Observable } from 'rxjs';
 import { SYSTEM_KEY } from 'src/common/constants/enums';
-import { ClientProxy } from '@nestjs/microservices';
+import { SessionUserModel } from 'src/common/models/session-user.model';
+import { RedisService } from 'src/common/redis/redis.service';
 
 @Injectable()
-export class AuthService {
-constructor(
-   @Inject('AUTH_SERVICE') private authClient: ClientProxy,
-) {}
-  async login(body: LoginDto) {
-    // return {refreshToken: 'abc', body};
-    return this.authClient.send({cmd: 'login'}, body)
+export class AuthService implements OnModuleInit {
+  private authClient: AuthServiceClient;
+  private userClient: UserServiceClient;
+  constructor(
+    @Inject(AUTHENTICATION_PACKAGE_NAME) private clientGrpc: ClientGrpc,
+    private readonly redisClient: RedisService,
+  ) { }
+  onModuleInit() {
+    this.authClient = this.clientGrpc.getService<AuthServiceClient>(AUTH_SERVICE_NAME)
+    this.userClient = this.clientGrpc.getService<UserServiceClient>(USER_SERVICE_NAME)
   }
-  async register(body: RegisterDto) {
-    return body;
+  async logIn(body: LoginAuthDto): Promise<Observable<AuthResp>> {
+    const res = this.authClient.logIn(body)
+    return res
   }
-  async refreshToken(userSession: SessionUserModel) {
-    return userSession;
+  async register(body: RegisterAuthDto): Promise<Observable<AuthResp>> {
+    const res = this.authClient.register(body)
+    return res
   }
-  async logout(userSession: SessionUserModel, res: Response) {
+  async refreshToken(sUser: SessionUserModel): Promise<Observable<AuthResp>> {
+    const res = this.authClient.refreshToken(sUser)
+    return res
+  }
+  async logout(sUser: SessionUserModel, res: Response) {
+    await this.addSidToBlacklist(sUser.sid)
     res.clearCookie(SYSTEM_KEY.RefreshTokenCookieKey, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict', // Adjust as necessary
       maxAge: 2592000000, // 30 days
     });
-    return userSession;
+
   }
-  async googleCalback(userSession: SessionUserModel) {
-    return userSession;
+  async getUserById(userId: string): Promise<any> {
+    return this.userClient.getUserById({ id: userId });
+
+  }
+  async sidInBlacklist(sid: string): Promise<string | null> {
+    return this.redisClient.get(`${SYSTEM_KEY.PrefixKeySessionBlackList}_${sid}`);
+
+  }
+  async addSidToBlacklist(sid: string): Promise<any> {
+    return this.redisClient.set(`${SYSTEM_KEY.PrefixKeySessionBlackList}_${sid}`, 1,)
+
   }
 
 }
