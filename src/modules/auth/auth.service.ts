@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Response } from 'express';
-import { AUTH_SERVICE_NAME, AUTHENTICATION_PACKAGE_NAME, AuthResp, AuthServiceClient, LoginAuthDto, RegisterAuthDto } from 'proto/generated/proto/auth';
+import { AUTH_SERVICE_NAME, AUTHENTICATION_PACKAGE_NAME, AuthResp, AuthServiceClient, LoginAuthDto, RegisterAuthDto, UserDataCallback } from 'proto/generated/proto/auth';
 import { USER_SERVICE_NAME, UserServiceClient } from 'proto/generated/proto/user';
 import { Observable } from 'rxjs';
 import { SYSTEM_KEY } from 'src/common/constants/enums';
@@ -22,6 +22,10 @@ export class AuthService implements OnModuleInit {
   }
   async logIn(body: LoginAuthDto): Promise<Observable<AuthResp>> {
     const res = this.authClient.logIn(body)
+    return res
+  }
+  async googleAuthCallback(body: UserDataCallback): Promise<Observable<AuthResp>> {
+    const res = this.authClient.googleCallback(body)
     return res
   }
   async register(body: RegisterAuthDto): Promise<Observable<AuthResp>> {

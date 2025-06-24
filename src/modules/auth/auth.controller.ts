@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseInterceptors, UseGuards, Res, Inject, OnModuleInit, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, UseGuards, Res, Inject, OnModuleInit, Param, Req } from '@nestjs/common';
 import { NoGlobalAuth } from 'src/configs/decorators/no-auth.decorator';
 import { SetCookieInterceptor } from 'src/configs/interceptions/set-cookie.interceptor';
 import { RefreshTokenAuthGuard } from 'src/configs/guards/refresh-token-auth.guard';
@@ -8,7 +8,7 @@ import { Response } from 'express';
 import { GoogleAuthGuard } from 'src/configs/guards/google-auth.guard';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-import { AuthResp, LoginAuthDto, RegisterAuthDto } from 'proto/generated/proto/auth';
+import { AuthResp, LoginAuthDto, RegisterAuthDto, UserDataCallback } from 'proto/generated/proto/auth';
 import { SYSTEM_KEY } from 'src/common/constants/enums';
 
 @Controller('auth')
@@ -38,7 +38,6 @@ export class AuthController {
 
   @Get('logout')
   async logut(@SessionUser() user: SessionUserModel, @Res({ passthrough: true }) res: Response) {
-
     return this.authService.logout(user, res);
   }
   @Get('user/:id')
@@ -54,8 +53,8 @@ export class AuthController {
   @NoGlobalAuth()
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
-  async googleAuthCallback(@SessionUser() user: SessionUserModel) {
-
+  async googleAuthCallback(@SessionUser()  user: UserDataCallback) {
+    return this.authService.googleAuthCallback(user)
   }
 
 }
