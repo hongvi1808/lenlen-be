@@ -41,10 +41,9 @@ export class AuthController {
     return this.authService.logout(user, res);
   }
   @Get('user/:id')
-  async getUser(@Param('id') id: string) {
+  async getUser(@SessionUser() user: SessionUserModel,@Param('id') id: string) {
     return this.authService.getUserById(id);
   }
-
   @NoGlobalAuth()
   @UseGuards(GoogleAuthGuard)
   @Get('google')

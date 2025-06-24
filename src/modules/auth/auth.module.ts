@@ -34,5 +34,6 @@ import { LenRedisModule } from 'src/common/redis/redis.module';
   ],
   controllers: [AuthController,],
   providers: [ AuthService, AccessTokenStrategy, RefreshTokenStrategy, GoogleStrategy, ],
+  exports: [AuthService]
 })
 export class AuthModule { }

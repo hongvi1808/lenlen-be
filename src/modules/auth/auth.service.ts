@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Response } from 'express';
-import { AUTH_SERVICE_NAME, AUTHENTICATION_PACKAGE_NAME, AuthResp, AuthServiceClient, LoginAuthDto, RegisterAuthDto, UserDataCallback } from 'proto/generated/proto/auth';
+import { AUTH_SERVICE_NAME, AUTHENTICATION_PACKAGE_NAME, AuthResp, AuthServiceClient, CheckPersModel, CheckResp, LoginAuthDto, RegisterAuthDto, UserDataCallback } from 'proto/generated/proto/auth';
 import { USER_SERVICE_NAME, UserServiceClient } from 'proto/generated/proto/user';
-import { Observable } from 'rxjs';
+import { firstValueFrom, map, Observable } from 'rxjs';
 import { SYSTEM_KEY } from 'src/common/constants/enums';
 import { SessionUserModel } from 'src/common/models/session-user.model';
 import { RedisService } from 'src/common/redis/redis.service';
@@ -48,6 +48,11 @@ export class AuthService implements OnModuleInit {
   }
   async getUserById(userId: string): Promise<any> {
     return this.userClient.getUserById({ id: userId });
+
+  }
+  async checkPermission(data: CheckPersModel): Promise<CheckResp> {
+    const res =  this.authClient.checkPermission(data);
+    return  firstValueFrom(res.pipe())
 
   }
   async sidInBlacklist(sid: string): Promise<string | null> {
