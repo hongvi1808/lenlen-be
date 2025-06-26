@@ -1,0 +1,31 @@
+
+import {OrderStatus} from '@prisma/client'
+import {ApiProperty} from '@nestjs/swagger'
+
+
+export class OrderDto {
+  id: string ;
+customerId: string ;
+@ApiProperty({
+  type: `number`,
+  format: `float`,
+})
+totalPrice: number ;
+@ApiProperty({
+  enum: OrderStatus,
+})
+status: OrderStatus ;
+active: boolean ;
+@ApiProperty({
+  type: `integer`,
+  format: `int64`,
+})
+createdAt: bigint ;
+createdBy: string ;
+@ApiProperty({
+  type: `integer`,
+  format: `int64`,
+})
+updatedAt: bigint ;
+updatedBy: string ;
+}
