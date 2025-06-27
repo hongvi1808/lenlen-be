@@ -1,26 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductRepo } from './product.repo';
+import { SessionUserModel } from 'src/common/models/session-user.model';
+import { FilterParams } from 'src/common/models/filter-params.model';
+import { ProductRes } from './entities/product.entity';
+import { PaginationItemModel } from 'src/common/models/res-success.model';
 
 @Injectable()
 export class ProductService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  constructor(private readonly productRepo: ProductRepo) { }
+  async create(user: SessionUserModel, body: CreateProductDto) {
+    return this.productRepo.create(user, body)
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findList(filers: FilterParams): Promise<PaginationItemModel<ProductRes | null>> {
+    return this.productRepo.findList(filers)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string): Promise<ProductRes | null> {
+    return this.productRepo.findOne(id)
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  update(id: string, user: SessionUserModel, body: UpdateProductDto) {
+    return this.productRepo.update(id, user, body)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  remove(id: string, user: SessionUserModel) {
+    return this.productRepo.remove(id, user)
   }
 }

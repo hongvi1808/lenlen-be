@@ -56,11 +56,12 @@ model Product {
   active          Boolean           @default(true)
   alive           Boolean           @default(true)
   createdAt       BigInt            @map("created_at")
-  createdBy       String            @map("create_by")
+  createdBy       String            @map("created_by")
   updatedAt       BigInt            @map("updated_at")
   updatedBy       String            @map("updated_by")
-  ProductCategory ProductCategory[]
-  OrderItem       OrderItem[]
+  productCategories ProductCategory[]
+  orderItems       OrderItem[]
+  cartItems        CartItem[]
 
   @@unique([id, slug])
   @@map("product")
@@ -73,10 +74,10 @@ model Category {
   active          Boolean           @default(true)
   alive           Boolean           @default(true)
   createdAt       BigInt            @map("created_at")
-  createdBy       String            @map("create_by")
+  createdBy       String            @map("created_by")
   updatedAt       BigInt            @map("updated_at")
   updatedBy       String            @map("updated_by")
-  ProductCategory ProductCategory[]
+  productCategories ProductCategory[]
 
   @@unique([id, slug])
   @@map("category")
@@ -91,26 +92,46 @@ model ProductCategory {
   active     Boolean  @default(true)
   alive      Boolean  @default(true)
   createdAt  BigInt   @map("created_at")
-  createdBy  String   @map("create_by")
+  createdBy  String   @map("created_by")
   updatedAt  BigInt   @map("updated_at")
   updatedBy  String   @map("updated_by")
 
   @@map("product_category")
 }
 
+model CartItem {
+  id         String  @id
+  customerId String? @map("customer_id")
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @map("product_id")
+
+  quantity  Int     @default(1)
+  alive     Boolean @default(true)
+  createdAt BigInt  @map("created_at")
+  createdBy String  @map("created_by")
+  updatedAt BigInt  @map("updated_at")
+  updatedBy String  @map("updated_by")
+
+  @@unique([id, productId])
+  @@map("cart_item")
+}
+
 model Order {
   id         String      @id
-  customerId String      @map("customer_id")
+  code       String
+  customerId String?     @map("customer_id")
   totalPrice Float       @default(0) @map("total_price")
   status     OrderStatus @default(Pending)
   orderItems OrderItem[]
   active     Boolean     @default(true)
   createdAt  BigInt      @map("created_at")
-  createdBy  String      @map("create_by")
+  createdBy  String      @map("created_by")
   updatedAt  BigInt      @map("updated_at")
   updatedBy  String      @map("updated_by")
   payments   Payment[]
 
+  @@unique([id, code])
   @@map("order")
 }
 
@@ -124,7 +145,7 @@ model OrderItem {
   price     Float   @default(0)
   active    Boolean @default(true)
   createdAt BigInt  @map("created_at")
-  createdBy String  @map("create_by")
+  createdBy String  @map("created_by")
   updatedAt BigInt  @map("updated_at")
   updatedBy String  @map("updated_by")
 
@@ -142,7 +163,7 @@ model Payment {
   paidAt        BigInt?       @map("paid_at") // nullable nếu chưa thanh toán
   active        Boolean       @default(true)
   createdAt     BigInt        @map("created_at")
-  createdBy     String        @map("create_by")
+  createdBy     String        @map("created_by")
   updatedAt     BigInt        @map("updated_at")
   updatedBy     String        @map("updated_by")
 

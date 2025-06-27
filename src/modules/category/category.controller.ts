@@ -1,18 +1,18 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
-import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CategoryService } from './category.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import { SessionUser } from 'src/configs/decorators/session-user.decorator';
 import { SessionUserModel } from 'src/common/models/session-user.model';
 import { FilterParams } from 'src/common/models/filter-params.model';
 
-@Controller('product')
-export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+@Controller('category')
+export class CategoryController {
+  constructor(private readonly productService: CategoryService) {}
 
   @Post()
-  create(@SessionUser() user: SessionUserModel, @Body() createProductDto: CreateProductDto) {
-    return this.productService.create(user,createProductDto);
+  create(@SessionUser() user: SessionUserModel, @Body() createCategoryDto: CreateCategoryDto) {
+    return this.productService.create(user,createCategoryDto);
   }
 
   @Get()
@@ -26,8 +26,8 @@ export class ProductController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string,@SessionUser() user: SessionUserModel, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id,user, updateProductDto);
+  update(@Param('id') id: string,@SessionUser() user: SessionUserModel, @Body() updateCategoryDto: UpdateCategoryDto) {
+    return this.productService.update(id,user, updateCategoryDto);
   }
 
   @Delete(':id')

@@ -2,6 +2,7 @@
 import {ApiProperty} from '@nestjs/swagger'
 import {ProductCategory} from '../../productCategory/entities/productCategory.entity'
 import {OrderItem} from '../../orderItem/entities/orderItem.entity'
+import {CartItem} from '../../cartItem/entities/cartItem.entity'
 
 
 export class Product {
@@ -33,6 +34,7 @@ createdBy: string ;
 })
 updatedAt: bigint ;
 updatedBy: string ;
-ProductCategory?: ProductCategory[] ;
-OrderItem?: OrderItem[] ;
+productCategories?: ProductCategory[] ;
+orderItems?: OrderItem[] ;
+cartItems?: CartItem[] ;
 }

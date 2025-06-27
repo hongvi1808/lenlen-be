@@ -4,9 +4,8 @@ import {ApiProperty,getSchemaPath} from '@nestjs/swagger'
 
 
 
-export class CreateOrderDto {
+export class CreateCartItemDto {
   id: string;
-code: string;
 customerId?: string;
 @ApiProperty({
   type: `integer`,

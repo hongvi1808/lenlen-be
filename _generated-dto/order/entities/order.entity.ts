@@ -7,7 +7,8 @@ import {Payment} from '../../payment/entities/payment.entity'
 
 export class Order {
   id: string ;
-customerId: string ;
+code: string ;
+customerId: string  | null;
 @ApiProperty({
   type: `number`,
   format: `float`,

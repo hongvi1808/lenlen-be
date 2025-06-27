@@ -5,7 +5,8 @@ import {ApiProperty} from '@nestjs/swagger'
 
 export class OrderDto {
   id: string ;
-customerId: string ;
+code: string ;
+customerId: string  | null;
 @ApiProperty({
   type: `number`,
   format: `float`,

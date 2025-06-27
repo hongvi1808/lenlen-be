@@ -4,9 +4,8 @@ import {ApiProperty} from '@nestjs/swagger'
 
 
 
-export class UpdateOrderDto {
-  code?: string;
-customerId?: string;
+export class UpdateCartItemDto {
+  customerId?: string;
 @ApiProperty({
   type: `integer`,
   format: `int64`,

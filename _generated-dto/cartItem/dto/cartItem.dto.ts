@@ -1,13 +1,15 @@
 
 import {ApiProperty} from '@nestjs/swagger'
-import {ProductCategory} from '../../productCategory/entities/productCategory.entity'
 
 
-export class Category {
+export class CartItemDto {
   id: string ;
-name: string ;
-slug: string ;
-active: boolean ;
+customerId: string  | null;
+@ApiProperty({
+  type: `integer`,
+  format: `int32`,
+})
+quantity: number ;
 alive: boolean ;
 @ApiProperty({
   type: `integer`,
@@ -21,5 +23,4 @@ createdBy: string ;
 })
 updatedAt: bigint ;
 updatedBy: string ;
-productCategories?: ProductCategory[] ;
 }

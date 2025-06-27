@@ -9,6 +9,8 @@ import { AccessTokenAuthGuard } from './configs/guards/access-token-auth.guard';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { ProductModule } from './modules/product/product.module';
+import { CategoryModule } from './modules/category/category.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { ProductModule } from './modules/product/product.module';
     }),
     PrismaModule,
     ProductModule,
+    CategoryModule,
+    CartModule,
   ],
   controllers: [],
   providers: [
