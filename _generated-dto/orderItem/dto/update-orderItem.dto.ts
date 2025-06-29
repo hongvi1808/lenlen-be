@@ -5,7 +5,8 @@ import {ApiProperty} from '@nestjs/swagger'
 
 
 export class UpdateOrderItemDto {
-  @ApiProperty({
+  name?: string;
+@ApiProperty({
   type: `integer`,
   format: `int64`,
 })

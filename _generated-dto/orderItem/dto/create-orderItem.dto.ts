@@ -6,6 +6,7 @@ import {ApiProperty,getSchemaPath} from '@nestjs/swagger'
 
 export class CreateOrderItemDto {
   id: string;
+name: string;
 @ApiProperty({
   type: `integer`,
   format: `int64`,

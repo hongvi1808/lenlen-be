@@ -1,7 +1,8 @@
 export class CartItemRes {
-     id: string ;
-    productId: string ;
+    id: string;
+    productId: string;
     productName: string;
-    productPrice: string
+    productPrice: number
     quantity: number
+    slug: string
 }

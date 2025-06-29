@@ -16,6 +16,11 @@ totalPrice: number ;
   enum: OrderStatus,
 })
 status: OrderStatus ;
+@ApiProperty({
+  type: `integer`,
+  format: `int32`,
+})
+orderNumber: number ;
 active: boolean ;
 @ApiProperty({
   type: `integer`,

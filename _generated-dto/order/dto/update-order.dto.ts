@@ -9,6 +9,11 @@ export class UpdateOrderDto {
 customerId?: string;
 @ApiProperty({
   type: `integer`,
+  format: `int32`,
+})
+orderNumber?: number;
+@ApiProperty({
+  type: `integer`,
   format: `int64`,
 })
 createdAt?: bigint;

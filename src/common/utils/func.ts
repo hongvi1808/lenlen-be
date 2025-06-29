@@ -16,3 +16,10 @@ export const forceToInfoPagition = (
 
     return { skip, take, page };
 };
+
+
+export const generateOrderCode = (orderNumber: number): string => {
+  const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const numberPart = orderNumber.toString().padStart(6, '0');
+  return `ORD-${datePart}-${numberPart}`;
+}

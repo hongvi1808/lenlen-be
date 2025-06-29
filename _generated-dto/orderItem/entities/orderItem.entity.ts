@@ -15,6 +15,7 @@ product?: Product ;
   format: `int32`,
 })
 quantity: number ;
+name: string ;
 @ApiProperty({
   type: `number`,
   format: `float`,

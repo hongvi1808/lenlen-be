@@ -10,4 +10,8 @@ export class CreateCartDto {
 
     @IsString()
     productId: string
+
+    @IsString()
+    @IsString()
+    customerId?: string
 }
