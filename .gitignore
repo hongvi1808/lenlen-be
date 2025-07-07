@@ -56,3 +56,4 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /generated/prisma
+/firebase/lenlen-be-872b00afa6ec.json

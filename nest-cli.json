@@ -3,6 +3,12 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
+    "assets": [
+      {
+        "include": "firebase/*.json",
+        "outDir": "dist/firebase"
+      }
+    ],
     "deleteOutDir": true
   }
 }

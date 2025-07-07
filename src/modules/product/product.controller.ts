@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -12,7 +12,7 @@ export class ProductController {
 
   @Post()
   create(@SessionUser() user: SessionUserModel, @Body() createProductDto: CreateProductDto) {
-    return this.productService.create(user,createProductDto);
+    return this.productService.create(user, createProductDto);
   }
 
   @Get()
@@ -26,12 +26,13 @@ export class ProductController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string,@SessionUser() user: SessionUserModel, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id,user, updateProductDto);
+  update(@Param('id') id: string, @SessionUser() user: SessionUserModel, @Body() updateProductDto: UpdateProductDto) {
+    return this.productService.update(id, user, updateProductDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @SessionUser() user: SessionUserModel,) {
-    return this.productService.remove(id,user);
+    return this.productService.remove(id, user);
   }
+
 }
