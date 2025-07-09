@@ -1,0 +1,54 @@
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: vi
+      POSTGRES_PASSWORD: vi123
+      POSTGRES_DB: lenlen-be
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    container_name: redis
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  lenlen-be-container:
+    container_name: lenlen-be
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lenlen-be:1.0.0
+    restart: unless-stopped
+    ports:
+      - "5679:5679"
+    env_file:
+      - .env.test
+    depends_on:
+      - postgres
+      - redis
+    # command: >
+    #   sh -c "npx prisma migrate deploy &&
+    #          node dist/src/main.js"
+    environment:
+      DATABASE_URL: postgresql://vi:vi123@postgres:5432/lenlen-be
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
