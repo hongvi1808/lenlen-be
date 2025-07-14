@@ -13,6 +13,7 @@ import { CategoryModule } from './modules/category/category.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
 import { FirebaseModule } from './common/firebase/firebase.module';
+import { MailConsumerModule } from './consumer/mail/mail.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { FirebaseModule } from './common/firebase/firebase.module';
         GOOGLE_CLIENT_ID: Joi.string().required(),
         GOOGLE_CLIENT_SECRET: Joi.string().required(),
         GOOGLE_CALLBACK_URL: Joi.string().required(),
+        RABBITMQ_URL: Joi.string().required(),
       })
     }),
     AuthModule,
@@ -40,6 +42,8 @@ import { FirebaseModule } from './common/firebase/firebase.module';
     CategoryModule,
     CartModule,
     OrderModule,
+    MailConsumerModule,
+    
   ],
   controllers: [],
   providers: [

@@ -5,14 +5,20 @@ import { SessionUser } from 'src/configs/decorators/session-user.decorator';
 import { SessionUserModel } from 'src/common/models/session-user.model';
 import { FilterParams } from 'src/common/models/filter-params.model';
 import { OrderStatus } from '@prisma/client';
+import { RabbitService } from 'src/common/rabbitmq/rabbit.service';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) { }
+  constructor(private readonly orderService: OrderService,
+     private readonly mailClient: RabbitService) { }
 
   @Post()
-  create(@SessionUser() user: SessionUserModel, @Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(user, createOrderDto);
+  async create(@SessionUser() user: SessionUserModel, @Body() createOrderDto: CreateOrderDto) {
+    const order = await this.orderService.create(user, createOrderDto);
+    if (order) {
+      this.mailClient.sendMailCreatedOrder(order);
+    }
+    return order;
   }
 
   @Get()

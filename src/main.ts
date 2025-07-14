@@ -11,6 +11,8 @@ import { GlobalValidationPipe } from './configs/pipes/global-validation.pipe';
 import { TrimPipe } from './configs/pipes/trim.pipe';
 import { ResponseFormatInterceptor } from './configs/interceptions/response-format.interceptor';
 import { AccessTokenAuthGuard } from './configs/guards/access-token-auth.guard';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { QUEUES } from './common/rabbitmq/rabbit.contant';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -55,6 +57,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, configDoc, configDocOption)
   // documentFactory.security = [{ jwt: [] }]
   SwaggerModule.setup('api-docs', app, document)
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [config.get<string>('RABBITMQ_URL', 'amqp://localhost:5672')],
+      queue: QUEUES.MAIL,
+      queueOptions: { durable: true },
+    },
+  });
 
   await app.listen(port, () => Logger.verbose(`Server is running on port: ${port}`));
 }
